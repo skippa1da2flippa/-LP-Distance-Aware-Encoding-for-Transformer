@@ -4,6 +4,7 @@ from torch import Tensor
 
 
 def message_passing(adj_mat: Tensor, layers: int, message_decay: bool = False, device: str = "cuda") -> Tensor:
+    """Compute iterative neighborhood features by multiplying adjacency and features."""
     old_adj: Tensor = torch.zeros(adj_mat.shape, dtype=torch.int, device=device)
     message: Tensor = torch.zeros(adj_mat.shape[0], dtype=torch.int, device=device)
     new_adj: Tensor = torch.zeros(adj_mat.shape, dtype=torch.int, device=device)

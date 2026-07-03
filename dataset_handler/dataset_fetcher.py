@@ -37,6 +37,7 @@ dataset_split_max_size: dict[str, list[int]] = {
 def planetoid_dataset_downloader(
         dataset_name: DatasetType, num_val: float, num_test: float
 ) -> Tuple[Data, Data, Data]:
+    """Load a Planetoid graph dataset and return its feature, edge, and split tensors."""
     dataset = Planetoid(
         root=planetoid_paths[dataset_name.name], name=dataset_name.value
     )
@@ -52,6 +53,7 @@ def planetoid_dataset_downloader(
 
 
 def split_dataset_fetcher(path: str, dataset_name: DatasetType) -> Tuple[Data, Data, Data]:
+    """Split dataset fetcher."""
     base_path: str = os.path.join(path, dataset_name.name)
     train_path = os.path.join(base_path, "split", "train_dataset.pt")
     val_path = os.path.join(base_path, "split", "val_dataset.pt")
@@ -71,6 +73,7 @@ def download_and_save_dataset(
         dataset_name: DatasetType, base_path: str,
         num_val: float = 0.1, num_test: float = 0.2
 ) -> None:
+    """Download and save dataset."""
     train_dataset, val_dataset, test_dataset = planetoid_dataset_downloader(
         dataset_name=dataset_name, num_val=num_val,
         num_test=num_test

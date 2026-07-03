@@ -6,6 +6,7 @@ from custom_blocks.layers.masked_linear import MaskedLinear
 
 
 def find_split(multi: int, target: int) -> int:
+    """Find split."""
     while target % multi:
         multi += 1
 
@@ -18,6 +19,7 @@ class SuperLinear(nn.Module):
             alpha: float = 0.5, decomposed: bool = False,
             num_target: int = 2, device: str = "cuda"
     ) -> None:
+        """Initialize the SuperLinear instance and store its configuration."""
         super().__init__()
 
         reduction_layer_out: int = find_split(int(out_features * alpha), out_features)
@@ -44,6 +46,7 @@ class SuperLinear(nn.Module):
         self.out_features: int = out_features
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         reduction_out: Tensor = self.linear(batch)
         tensor_prod: Tensor = torch.tensordot(reduction_out, self.V, dims=0)
 

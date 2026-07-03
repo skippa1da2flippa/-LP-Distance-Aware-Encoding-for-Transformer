@@ -22,6 +22,7 @@ def preprocess_one_transformer(
         mp: bool = False,
         device: str = "cuda"
 ) -> dict[str, Any]:
+    """Preprocess one transformer."""
     if hop == 1:
         max_num_nodes: int = dataset_split_max_size[dataset_name][0]
     elif hop == 2:
@@ -70,6 +71,7 @@ def from_raw_to_processed(
         inclusion_map: list[int] = None,
         hops: list[int] = None,
 ) -> None:
+    """Convert raw to processed."""
     if inclusion_map is None:
         inclusion_mask = [1, 1, 1]
     else:
@@ -157,6 +159,7 @@ def from_splitted_raw_to_processed(
         inclusion_map: list[int] = None,
         hops: list[int] = None,
 ) -> None:
+    """Convert splitted raw to processed."""
     if inclusion_map is None:
         inclusion_mask = [1, 1, 1]
     else:

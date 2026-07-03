@@ -13,6 +13,7 @@ def from_planetoid_to_processed(
     inclusion_map: list[int] = None
 ) -> None:
 
+    """Convert planetoid to processed."""
     download_and_save_dataset(
         dataset_name=dataset_name,
         base_path=base_path,

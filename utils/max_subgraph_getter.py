@@ -4,6 +4,7 @@ from typing import Any
 
 
 def get_max_subgraph(path: str, hops: list[int] = None, is_split: bool = False) -> list[int]:
+    """Return max subgraph."""
     hops = [1, 2] if hops is None else hops
     res: list[list[dict]] = [[], []] if is_split else []
     maxi: list[int] = []

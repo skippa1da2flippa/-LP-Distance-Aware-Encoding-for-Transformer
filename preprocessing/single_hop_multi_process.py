@@ -52,6 +52,7 @@ def preprocess_edge_chunk(
 
 def heavenly_split(edges: Tensor, num_workers: int, labels: Tensor = None) -> Tuple[List[Tensor], List[Tensor]]:
     # Split edges
+    """Split edge ids into balanced chunks for parallel preprocessing."""
     evenly_splits_edges: np.ndarray = np.linspace(
         start=0, stop=edges.shape[1], num=num_workers + 1,
         dtype=np.int32
@@ -156,6 +157,7 @@ def raw_dataset_preprocess(
         num_workers: int = 10,
         hops: list[int] = None
 ) -> None:
+    """Preprocess raw graph data into train, validation, and test artifacts."""
     inclusion_map = [1, 1, 1] if inclusion_map is None else inclusion_map
 
     train, val, test = split_dataset_fetcher(path=base_path, dataset_name=dataset_name)
@@ -189,6 +191,7 @@ def process_one_hit(
         dataset_path: str,
         device: str = "cpu"
 ) -> None:
+    """Process one hit."""
     res: list[Tuple[list[DatasetItem], list[Tensor]]] = []
 
     print(f"Process number {index} starting hit-k-processing with edge_chunk of size: {edge_chunk.shape[1]}")
@@ -255,6 +258,7 @@ def prepare_hit_k(
         num_workers: int = 10,
         inclusion_map: list[int] = None
 ) -> None:
+    """Prepare hit k."""
     if inclusion_map is None:
         inclusion_map = [1 for _ in range(num_workers)]
 

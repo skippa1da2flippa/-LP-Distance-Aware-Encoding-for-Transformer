@@ -12,6 +12,7 @@ from utils.layer_type import LayerType
 
 
 def just_a_wrapper(path: str, dataset_name: DatasetType) -> Callable[[optuna.trial.Trial], Tensor]:
+    """Wrap the Optuna objective with a fixed experiment configuration."""
     def link_transformer_objective(trial):
 
         """Dataset params"""
@@ -108,6 +109,7 @@ def just_a_wrapper(path: str, dataset_name: DatasetType) -> Callable[[optuna.tri
 
 
 def just_a_wrapper2(path: str, dataset_name: DatasetType) -> Callable[[optuna.trial.Trial], Tensor]:
+    """Wrap the second Optuna objective with a fixed experiment configuration."""
     def link_transformer_objective(trial):
 
         """Dataset params"""

@@ -16,9 +16,6 @@ from torchmetrics.functional import auroc
 FullBatchWrapper = Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]
 
 
-# TODO allegedly max token size should be based on the hardware from my calculation
-#  with a d_model of 1000 and a max_token of 500 3 GB of VRAM is used (without counting ff
-#  and others)
 
 class LinkTransformer(L.LightningModule):
     def __init__(
@@ -43,6 +40,7 @@ class LinkTransformer(L.LightningModule):
             no_trick: bool = False,
             device: str = "cuda"
     ) -> None:
+        """Initialize the LinkTransformer instance and store its configuration."""
         super().__init__()
 
         self.save_hyperparameters()
@@ -100,6 +98,7 @@ class LinkTransformer(L.LightningModule):
         self.criterion: nn.Module = loss_fun()
 
     def no_pos_handler(self, pos_aggregated: Tensor, masks: Tensor) -> Tensor:
+        """Zero positional features when positional encodings are disabled."""
         if self.hparams.no_pos:
             out: Tensor = torch.zeros(
                 pos_aggregated.shape[0], pos_aggregated.shape[1],
@@ -119,6 +118,7 @@ class LinkTransformer(L.LightningModule):
             self, feats: Tensor, pos_aggregated: Tensor,
             zero_one_trick: Tensor, dist_trick: Tensor
     ) -> Tensor:
+        """Drop auxiliary trick features when trick features are disabled."""
         if self.hparams.no_trick:
             aggregated = torch.cat([
                 feats, pos_aggregated,
@@ -137,6 +137,7 @@ class LinkTransformer(L.LightningModule):
         return aggregated
 
     def forward(self, batch: FullBatchWrapper) -> Tensor:
+        """Run the forward pass for this module."""
         feat_batch, pos_batch, mp_batch, masks, target_footprint, altered_labels = batch
 
         pos_aggregated: Tensor = self.tail_agg(pos_batch, mp_batch)
@@ -154,6 +155,7 @@ class LinkTransformer(L.LightningModule):
         return self.decoder(optimus_out)
 
     def predict(self, batch: DatasetItem) -> Tensor:
+        """Run inference and return model predictions."""
         self.eval()
 
         with torch.no_grad():
@@ -173,24 +175,28 @@ class LinkTransformer(L.LightningModule):
             self, batch: DatasetItem,
             batch_idx: int, dataloader_idx: int = 0
     ) -> Tensor:
+        """Run one training step and log the resulting metrics."""
         return self.base_step(batch, batch_idx, dataloader_idx, step_type="train_dataset")
 
     def validation_step(
             self, batch: DatasetItem,
             batch_idx: int, dataloader_idx: int = 0
     ) -> None:
+        """Run one validation step and log the resulting metrics."""
         self.base_step(batch, batch_idx, dataloader_idx, step_type="val_dataset")
 
     def test_step(
             self, batch: DatasetItem,
             batch_idx: int, dataloader_idx: int = 0
     ) -> None:
+        """Run one test step and log the resulting metrics."""
         self.base_step(batch, batch_idx, dataloader_idx, step_type="test_dataset")
 
     def base_step(
             self, batch: DatasetItem, batch_idx: int,
             dataloader_idx: int = 0, step_type: str = None
     ) -> Tensor:
+        """Run a shared train, validation, or test step and return the loss."""
         feats_batch, pos_batch, mp_emb, masks, labels, target_footprint, altered_labels = batch
         feats_batch, pos_batch, mp_emb, masks, labels, target_footprint, altered_labels = (
             feats_batch.to(self.device), pos_batch.to(self.device), mp_emb.to(self.device),
@@ -222,6 +228,7 @@ class LinkTransformer(L.LightningModule):
         return loss
 
     def on_base_epoch_end(self, epoch_type: str) -> None:
+        """Aggregate epoch predictions and log evaluation metrics."""
         if epoch_type == "val":
             y_hat, y = self._val_predictions, self._val_targets
         else:
@@ -254,17 +261,20 @@ class LinkTransformer(L.LightningModule):
         )
 
     def on_validation_epoch_end(self) -> None:
+        """Finalize validation metrics and clear cached validation outputs."""
         self.on_base_epoch_end(epoch_type="val")
         self._val_targets.clear()
         self._val_predictions.clear()
 
     def on_test_epoch_end(self) -> None:
+        """Finalize test metrics and clear cached test outputs."""
         self.on_base_epoch_end(epoch_type="test")
         self._test_targets.clear()
         self._test_predictions.clear()
 
     def configure_optimizers(self) -> Tuple[list, list]:
         # Weight decay is not applied onto bias parameters and layer norm layer
+        """Create the optimizer configuration used by training."""
         no_decay = ["bias", "layer_norm", "norm1", "norm2"]
         param_groups = [
             {

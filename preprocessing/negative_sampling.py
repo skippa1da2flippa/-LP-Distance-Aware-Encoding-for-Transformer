@@ -22,6 +22,7 @@ def single_get_ids_neg_sampling(
         graph_nodes: int, num_neg_samples: int = 500,
         device: str = "cpu"
 ) -> Tensor:
+    """Generate one negative destination for each source node."""
     node_mask, _ = single_subgraph_extraction(
         edge_index=edge_index, target_node=target,
         k_hop=1, graph_nodes=graph_nodes, device=device
@@ -39,6 +40,7 @@ def double_get_ids_neg_sampling(
         dataset_name: DatasetType,
         num_neg_samples: int
 ) -> Tuple[Tensor, Tensor]:
+    """Generate negative source and destination ids for sampled edges."""
     non_neighboring_u: Tensor = single_get_ids_neg_sampling(
         target=target_u, edge_index=edge_index,
         graph_nodes=dataset_sizes[dataset_name.value][0], num_neg_samples=num_neg_samples
@@ -63,6 +65,7 @@ def get_features_neg_sampling(
         alter_labeling: bool = False,
         device: str = "cpu"
 ) -> Tuple[list[DatasetItem], list[Tensor]]:
+    """Return features neg sampling."""
     if hop == 1:
         max_num_nodes: int = dataset_split_max_size[dataset_name][0]
     elif hop == 2:

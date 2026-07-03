@@ -27,6 +27,7 @@ class CustomDataModule(pl.LightningDataModule):
             num_splits_per_epoch: int = 2,
             alter_labeling: bool = False,
     ) -> None:
+        """Initialize the CustomDataModule instance and store its configuration."""
         super().__init__()
         self.dataset_path: str = dataset_path
         self.dataset_name: str = DatasetType[os.path.basename(self.dataset_path)].value
@@ -55,6 +56,7 @@ class CustomDataModule(pl.LightningDataModule):
         self.pos_idx = self.neg_idx = 0
 
     def setup(self, stage: str = None) -> None:
+        """Move the current data split to the configured device before training."""
         print("START OF THE TRAINING")
         """Called once at the beginning of training."""
         if stage == "fit":
@@ -76,11 +78,13 @@ class CustomDataModule(pl.LightningDataModule):
         )
 
     def val_dataloader(self) -> DataLoader:
+        """Build a validation dataloader from the held-out split."""
         print("Just called val_dataloader method")
         """Validation DataLoader (static dataset)."""
         return self.val_dataloader_instance
 
     def train_dataloader(self) -> DataLoader:
+        """Train dataloader."""
         print("Just called train_dataloader method")
         """Called at the start of every epoch by the Trainer."""
         self._update_dataset()  # Initialize the first dataset

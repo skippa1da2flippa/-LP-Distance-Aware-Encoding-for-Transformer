@@ -10,6 +10,7 @@ def sparse_single_subgraph_extraction(
         k_hop: int, graph_nodes: int,
         device: str = "cuda"
 ) -> Tuple[Tensor, Tensor]:
+    """Extract a sparse k-hop subgraph and return relabeled node ids."""
     node_mask_indices = set()  # Sparse set representation of node_mask
     target_node = target_node.reshape(-1)
     nodes_subset: list[Tensor] = [target_node.to(device)]
@@ -45,6 +46,7 @@ def single_subgraph_extraction(
         k_hop: int, graph_nodes: int,
         device: str = "cuda"
 ) -> Tuple[Tensor, Tensor]:
+    """Extract one dense k-hop subgraph around a source-target node pair."""
     node_mask: Tensor = torch.zeros(size=(graph_nodes,), dtype=torch.bool, device=device)
     target_node = target_node.reshape(-1)
     nodes_subset: list[Tensor] = [target_node.to(device)]
@@ -81,6 +83,7 @@ def subgraph_extraction(
         graph_size: int, return_single_subgraphs: bool = False,
         remove_edge: bool = False, device: str = "cuda"
 ) -> SubGraphWrapper:
+    """Extract subgraphs for each edge in the supplied edge index."""
     if remove_edge:
         lr_mask: Tensor = (graph.edge_index[0, :] == target_nodes[0]) & (graph.edge_index[1, :] == target_nodes[1])
         rl_mask: Tensor = (graph.edge_index[0, :] == target_nodes[1]) & (graph.edge_index[1, :] == target_nodes[0])

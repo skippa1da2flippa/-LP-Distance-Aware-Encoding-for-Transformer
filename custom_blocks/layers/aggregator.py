@@ -8,6 +8,7 @@ class AggregatorLayer(nn.Module):
             aggregator: Callable[[Tensor], Tensor], mid_out: int = None,
             device: str = "cuda"
     ) -> None:
+        """Initialize the AggregatorLayer instance and store its configuration."""
         super().__init__()
 
         self.in_features: int = in_features
@@ -26,5 +27,6 @@ class AggregatorLayer(nn.Module):
         )
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         aggregated_batch: Tensor = self.aggregator(batch)
         return self.linear(aggregated_batch)

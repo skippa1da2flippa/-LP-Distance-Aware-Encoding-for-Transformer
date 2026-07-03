@@ -32,6 +32,7 @@ class TransformerDataset(Dataset):
             local: bool = True,
             device: str = "cpu"
     ) -> None:
+        """Initialize the TransformerDataset instance and store its configuration."""
         super().__init__()
 
         self.path: str = dataset_path
@@ -66,6 +67,7 @@ class TransformerDataset(Dataset):
                 self.limit_one()
 
     def _preprocess(self) -> None:
+        """Load preprocessed tensors for this dataset split from disk."""
         processed_path = os.path.join(self.path, f"processed_dataset\\{self.data_type}")
         target_labels_path = os.path.join(processed_path, "targets_labels.pt")
         with open(target_labels_path, "rb") as f:
@@ -93,6 +95,7 @@ class TransformerDataset(Dataset):
 
     def _process_each_sample(self, targets_nodes: list[Tensor]) -> None:
 
+        """Process each sample."""
         max_sub_graph_ids: Tensor = max(self.sub_graphs_ids, key=lambda x: x.numel())
         max_sub_graph_size: int = max_sub_graph_ids.numel()
         self.max_nodes = max_sub_graph_size if max_sub_graph_size > self.max_nodes else self.max_nodes
@@ -147,6 +150,7 @@ class TransformerDataset(Dataset):
 
     def limit_one(self):
         # Ensure the limit does not exceed the list length
+        """Limit the dataset while preserving samples from both ends."""
         limit = min(self.limit, len(self.pos_emb))
 
         # Create the limited versions by preserving values from both ends
@@ -169,6 +173,7 @@ class TransformerDataset(Dataset):
         self.sub_graphs_ids = limited_sub_graph_ids
 
     def extend(self, sdn_dataset: "TransformerDataset") -> None:
+        """Append another TransformerDataset into this dataset."""
         self.pos_emb.extend(sdn_dataset.pos_emb)
         self.sub_graphs_ids.extend(sdn_dataset.sub_graphs_ids)
         if self.mp >= 0:
@@ -183,6 +188,7 @@ class TransformerDataset(Dataset):
             self.max_nodes = sdn_dataset.max_nodes
 
     def _assign_data(self, data: Tuple[list[DatasetItem], list[Tensor], Tensor]) -> None:
+        """Assign loaded samples, subgraph ids, and bag-of-words embeddings."""
         sample_lst, self.sub_graphs_ids, self.BOW_emb = data
         self.BOW_emb = self.BOW_emb.to(self.device)
 
@@ -197,6 +203,7 @@ class TransformerDataset(Dataset):
         self.max_nodes = self.pos_emb[0].shape[1]
 
     def process_split(self, split: list[int]) -> None:
+        """Process split."""
         processed_path = os.path.join(self.path, "processed_dataset")
         data_split_path = os.path.join(processed_path, self.data_type)
         hop_path = os.path.join(data_split_path, f"hop_{self.hop}")
@@ -234,9 +241,11 @@ class TransformerDataset(Dataset):
         self._process_each_sample(targets_nodes=target_nodes)
 
     def __len__(self) -> int:
+        """Return the number of samples stored by this dataset."""
         return len(self.pos_emb) if self.limit <= 0 else self.limit
 
     def __getitem__(self, item: int) -> DatasetItem:
+        """Return the dataset item at the requested index."""
         return DatasetItem(
             bow_emb=self.BOW_emb[self.sub_graphs_ids[item], :],
             pos_emb=self.pos_emb[item],

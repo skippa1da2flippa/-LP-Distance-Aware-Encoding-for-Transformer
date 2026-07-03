@@ -35,18 +35,21 @@ MASKED_AGGREGATOR_FUNCTION_ss: dict[str, Callable[[Tensor, Tensor], Tensor]] = {
 
 
 def masked_prod(x: Tensor, mask: Tensor) -> Tensor:
+    """Apply a masked product across sequence positions."""
     mask = mask.unsqueeze(dim=-1).int()
     masked_x: Tensor = x * mask
     return torch.prod(masked_x + (1 - mask), dim=1)
 
 
 def masked_sum(x: Tensor, mask: Tensor) -> Tensor:
+    """Apply a masked sum across sequence positions."""
     mask = mask.unsqueeze(dim=-1).int()
     masked_x: Tensor = x * mask
     return torch.sum(masked_x, dim=1)
 
 
 def masked_avg(x: Tensor, mask: Tensor) -> Tensor:
+    """Apply a masked average across sequence positions."""
     summed_mask: Tensor = torch.sum(mask, dim=1)
     masked_x: Tensor = masked_sum(x, mask)
     return masked_x / summed_mask.unsqueeze(dim=-1)
@@ -56,6 +59,7 @@ def base_aggregator_wrapper(aggregator_name: str, masked: bool = False) -> Union
     Callable[[Tensor], Tensor],
     Callable[[Tensor, Tensor], Tensor]
 ]:
+    """Return the named masked or unmasked aggregation function."""
     if masked:
         return MASKED_AGGREGATOR_FUNCTION_ss[AggregatorType[aggregator_name]]
     else:

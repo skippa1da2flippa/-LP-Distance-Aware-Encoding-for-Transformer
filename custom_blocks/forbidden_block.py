@@ -12,6 +12,7 @@ class ForbiddenBlock(nn.Module):
             f: Type[nn.Module] = nn.Sigmoid, device: str = "cuda"
     ) -> None:
 
+        """Initialize the ForbiddenBlock instance and store its configuration."""
         super().__init__()
 
         if dropout > .0:
@@ -35,6 +36,7 @@ class ForbiddenBlock(nn.Module):
         )
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         x_batch = self.dropout(batch)
 
         x_batch = self.aggregator_layer(x_batch)

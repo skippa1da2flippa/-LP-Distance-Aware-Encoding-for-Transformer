@@ -69,6 +69,7 @@ def metric_handler(
         base_path: str, dataset_name: DatasetType, model_version: str, epoch_name: str, mp: bool,
         altered: bool, hit_k_datasets: list[DataLoader] = None
 ) -> Tensor:
+    """Compute the requested evaluation metric for predictions and labels."""
     model_path: str = os.path.join(base_path, f"{dataset_name.name}_logs\\{model_version}")
     checkpoint_path: str = os.path.join(model_path, f"checkpoints\\{epoch_name}")
     hparams_file: str = os.path.join(model_path, "hparams.yaml")

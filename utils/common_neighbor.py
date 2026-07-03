@@ -8,6 +8,7 @@ def get_common_neighbor_and_degree(
     k_hop: int, graph_nodes: int,
     device: str = "cuda"
 ) -> Tuple[int, int, int]:
+    """Return common neighbor and degree."""
     neighbor_map_u, _ = single_subgraph_extraction(
         edge_index=edge_index, target_node=target_nodes[0],
         k_hop=k_hop, graph_nodes=graph_nodes,

@@ -10,6 +10,7 @@ class DecomposerLayer(nn.Module):
             num_target: int = 1, device: str = "cuda"
     ) -> None:
 
+        """Initialize the DecomposerLayer instance and store its configuration."""
         super().__init__()
 
         self.in_features: int = in_features
@@ -32,6 +33,7 @@ class DecomposerLayer(nn.Module):
             )
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         if self.num_target >= 2:
             dims: Tuple = batch.shape[0], self.num_target, -1
         else:

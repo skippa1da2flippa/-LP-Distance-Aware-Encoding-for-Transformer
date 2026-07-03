@@ -9,6 +9,7 @@ from dataset_handler.transformer_dataset import TransformerDataset, DatasetItem
 
 
 def custom_collate_fn(batch: list[DatasetItem]) -> DatasetItem:
+    """Batch dataset items into the tuple format expected by the transformer."""
     bow_emb: list[Tensor] = [item.bow_emb for item in batch]
     pos_emb: list[Tensor] = [item.pos_emb for item in batch]
     mp_emb: list[Union[Tensor, None]] = [item.mp_emb for item in batch]
@@ -69,6 +70,7 @@ def transformer_prepare_data_loaders(
         local_pos: bool = False,
 ) -> Union[DataLoader, Tuple[DataLoader, DataLoader]]:
 
+    """Build train, validation, and test dataloaders for transformer datasets."""
     dataset_name: str = os.path.basename(path)
     dataset_value: str = DatasetType[dataset_name].value
     train: TransformerDataset = TransformerDataset(

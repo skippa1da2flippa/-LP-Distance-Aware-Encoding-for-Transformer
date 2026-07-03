@@ -17,6 +17,7 @@ class BoxMLP(BaseSuperMLP):
             no_head: bool = False
     ) -> None:
 
+        """Initialize the BoxMLP instance and store its configuration."""
         layers_spec: list[MLPBundle] = []
 
         if linear:
@@ -48,6 +49,7 @@ class BoxMLP(BaseSuperMLP):
             no_head: bool = False
     ) -> list[MLPBundle]:
 
+        """Create the hidden block sequence used by the BoxMLP."""
         layers_spec: list[MLPBundle] = []
         mid_out = mid_out if mid_out else in_features
 
@@ -91,6 +93,7 @@ class BoxMLP(BaseSuperMLP):
             num_target: int = 2, merge: bool = True
     ) -> list[MLPBundle]:
 
+        """Create the linear layer sequence used by the BoxMLP."""
         layers_spec: list[MLPBundle] = []
 
         for idx in range(n_layers - 1):
@@ -116,4 +119,5 @@ class BoxMLP(BaseSuperMLP):
         return layers_spec
 
     def _dec_forbs_agg(self, n_layers):
+        """Configure decoder, forbidden block, and aggregator components."""
         pass

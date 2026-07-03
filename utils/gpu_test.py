@@ -3,6 +3,7 @@ from torch import cuda
 
 
 def GPU_check() -> cuda.device:
+    """Print whether PyTorch can access CUDA and show the selected device."""
     print("Is CUDA available:", torch.cuda.is_available())
     print("CUDA version:", torch.version.cuda)
     print("PyTorch version:", torch.__version__)

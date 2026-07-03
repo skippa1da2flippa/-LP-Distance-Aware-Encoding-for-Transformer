@@ -16,6 +16,7 @@ class MLPBundle:
             num_target: int = 2
     ) -> None:
 
+        """Initialize the MLPBundle instance and store its configuration."""
         self._index: int = index
 
         if l_type == LayerType.DROPOUT:
@@ -81,7 +82,9 @@ class MLPBundle:
             }
 
     def get_bundle(self) -> dict[str, Any]:
+        """Return bundle."""
         return self._bundle
 
     def get_type(self) -> Type[nn.Module]:
+        """Return type."""
         return self._type

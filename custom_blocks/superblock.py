@@ -10,6 +10,7 @@ class SuperBlock(nn.Module):
             num_target: int = 2, device: str = "cuda"
     ) -> None:
 
+        """Initialize the SuperBlock instance and store its configuration."""
         super().__init__()
 
         if dropout > .0:
@@ -30,6 +31,7 @@ class SuperBlock(nn.Module):
         )
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         dropped_out: Tensor = self.dropout(batch)
 
         x_batch = self.super_linear(dropped_out)

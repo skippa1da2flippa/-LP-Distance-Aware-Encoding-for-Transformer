@@ -16,6 +16,7 @@ FullBatchWrapper = Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]
 
 
 def early_stop_handler(idx: int, val_loss: list[float], min_delta: float) -> bool:
+    """Create an early-stopping callback configured from trainer settings."""
     return (val_loss[idx] - val_loss[-1]) < min_delta
 
 
@@ -35,6 +36,7 @@ class LinkTransformer(nn.Module):
             loss_fun: Type[nn.Module] = nn.BCELoss,
             device: str = "cuda"
     ) -> None:
+        """Initialize the LinkTransformer instance and store its configuration."""
         super().__init__()
 
         self.head_agg: Callable[[Tensor, Tensor], Tensor] = MASKED_AGGREGATOR_FUNCTION_ss[head_agg_type]
@@ -88,6 +90,7 @@ class LinkTransformer(nn.Module):
         }
 
     def forward(self, batch: FullBatchWrapper) -> Tensor:
+        """Run the forward pass for this module."""
         feats_batch, pos_batch, mp_emb, masks, target_footprint = batch
         feats_batch, pos_batch, mp_emb, masks, target_footprint = (
             feats_batch.to(self.device), pos_batch.to(self.device),
@@ -112,6 +115,7 @@ class LinkTransformer(nn.Module):
         return nn.Sigmoid()(self.decoder(optimus_out))
 
     def get_optimizer(self) -> optim.Optimizer:
+        """Return optimizer."""
         no_decay = ["bias", "LayerNorm.weight", "layer_norm.weight"]  # Parameters to exclude from weight decay
         param_groups = [
             {
@@ -130,6 +134,7 @@ class LinkTransformer(nn.Module):
         )
 
     def base_step(self, batch: DatasetItem) -> Tuple[Tensor, Tensor]:
+        """Run one supervised step and return predictions, labels, and loss."""
         feats_batch, pos_batch, mp_emb, masks, labels, target_footprint = batch
         prediction: Tensor = self.forward((
             feats_batch, pos_batch, mp_emb, masks, target_footprint
@@ -142,6 +147,7 @@ class LinkTransformer(nn.Module):
             roc_auc: Tensor, f1: Tensor, epoch: int
     ) -> None:
 
+        """Update best hyper."""
         if self.best_hyper["val_loss"] < 0 or self.best_hyper["val_loss"] > val_loss:
             self.best_hyper = {
                 "val_loss": val_loss,
@@ -152,6 +158,7 @@ class LinkTransformer(nn.Module):
             }
 
     def validation_handler(self, val_data: DataLoader, epoch: int, log: int) -> float:
+        """Create the checkpoint and early-stopping callbacks for validation."""
         self.eval()
 
         predictions: Tensor = torch.tensor([], device=self.device)
@@ -188,6 +195,7 @@ class LinkTransformer(nn.Module):
             val_data: DataLoader, patience: int = -1,
             min_delta: float = .0, log: bool = True
     ):
+        """Train handler."""
         self.train()
 
         check_point: int = 0

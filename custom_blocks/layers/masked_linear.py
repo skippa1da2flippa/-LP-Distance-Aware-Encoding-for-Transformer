@@ -10,6 +10,7 @@ class MaskedLinear(nn.Module):
             ignore_mask: bool = False,
             device: str = "cuda"
     ) -> None:
+        """Initialize the MaskedLinear instance and store its configuration."""
         super().__init__()
 
         self.device: str = device
@@ -28,6 +29,7 @@ class MaskedLinear(nn.Module):
         )
 
         def get_mask(batch_size: int, masks: Tensor = None) -> Tensor:
+            """Return mask."""
             if masks is not None and self.out_features > 2:
                 if self.decomposed:
                     return torch.cat((masks, masks), dim=1)
@@ -49,6 +51,7 @@ class MaskedLinear(nn.Module):
         self.get: Callable[[int, Tensor], Tensor] = get_mask
 
     def forward(self, batch: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
+        """Run the forward pass for this module."""
         x_batch, masks = batch
 
         if self.ignore_mask:

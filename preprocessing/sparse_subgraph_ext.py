@@ -10,6 +10,7 @@ def single_subgraph_extraction(
         k_hop: int, graph_nodes: int,
         device: str = "cuda"
 ) -> Tuple[Tensor, Tensor]:
+    """Extract a sparse k-hop subgraph around a source-target node pair."""
     node_mask_indices = set()  # Sparse set representation of node_mask
     target_node = target_node.reshape(-1)
     nodes_subset: list[Tensor] = [target_node.to(device)]

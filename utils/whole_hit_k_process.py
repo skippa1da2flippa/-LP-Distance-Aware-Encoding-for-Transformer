@@ -19,6 +19,7 @@ def from_split_to_hit_k_data(
         inclusion_map: list[int] = None,
         subset: int = -1
 ) -> None:
+    """Convert split to hit k data."""
     _, _, test = split_dataset_fetcher(path=base_path, dataset_name=dataset_name)
 
     bow_emb: Tensor = test.x

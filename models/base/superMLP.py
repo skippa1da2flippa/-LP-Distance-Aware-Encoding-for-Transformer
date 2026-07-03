@@ -9,12 +9,14 @@ class BaseSuperMLP(nn.Module):
             self, layers_info: list[MLPBundle], f: Type[nn.Module],
     ) -> None:
 
+        """Initialize the BaseSuperMLP instance and store its configuration."""
         super().__init__()
 
         self._n_layers: int = len(layers_info)
         self.model_layers, self.model_layers_names = self._build_model(layers_info, f)
 
     def _build_model(self, layers_info: list[MLPBundle], f: Type[nn.Module]) -> Tuple[nn.ModuleList, list[str]]:
+        """Build the configurable stack of linear layers and blocks."""
         model_layers: nn.ModuleList = nn.ModuleList()
         model_layers_names: list[str] = []
         f_counter: int = 1
@@ -38,6 +40,7 @@ class BaseSuperMLP(nn.Module):
         return model_layers, model_layers_names
 
     def forward(self, batch: Tensor) -> Tensor:
+        """Run the forward pass for this module."""
         x_batch = batch
         for layer_name, layer in zip(self.model_layers_names, self.model_layers):
             x_batch = layer(x_batch)
@@ -52,6 +55,7 @@ class BaseSuperMLP(nn.Module):
             num_target: int = 2
     ) -> list[MLPBundle]:
 
+        """Set a block."""
         layer_spec: list[MLPBundle] = []
 
         if (not idx) or (idx == n_layers - 1):
@@ -82,6 +86,7 @@ class BaseSuperMLP(nn.Module):
             num_target: int = 2
     ) -> list[MLPBundle]:
 
+        """Set linear layer."""
         layer_spec: list[MLPBundle] = []
 
         if idx >= n_layers - 1:

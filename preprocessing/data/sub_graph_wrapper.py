@@ -9,6 +9,7 @@ class SubGraphWrapper(Data):
             distances: list[Tensor], single_masks: list[Tensor] = None,
             x: Tensor = None
     ) -> None:
+        """Initialize the SubGraphWrapper instance and store its configuration."""
         super().__init__(edge_index=edge_index, x=x)
 
         self.subgraph_mask: Tensor = subgraph_mask
@@ -26,6 +27,7 @@ class SubGraphWrapper(Data):
             self.v_subgraph: Tensor = torch.nonzero(self.v_mask, as_tuple=False).reshape(-1)
 
     def __iter__(self):
+        """Return an iterator over this object's contents."""
         yield self.subgraph_ids
         yield self.edge_index
         yield self.u_distance, self._v_distance

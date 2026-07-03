@@ -15,6 +15,7 @@ def get_all_positional(
         device: str = "cuda"
 ) -> Tensor:
 
+    """Return all positional."""
     distance_mat: Tensor = torch.eye(
         packet.subgraph_ids.shape[0],
         dtype=torch.float, device=device
@@ -38,6 +39,7 @@ def get_one_positional(
         distance_mat: Tensor, log: bool = False
 ) -> None:
 
+    """Return one positional."""
     source: Tensor = subgraph_ids[source_id]
     for target_id in range(source_id + 1, distance_mat.shape[0]):
         target: Tensor = subgraph_ids[target_id]
